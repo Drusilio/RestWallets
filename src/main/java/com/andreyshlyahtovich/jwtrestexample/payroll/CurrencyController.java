@@ -4,6 +4,7 @@ import com.andreyshlyahtovich.jwtrestexample.model.Currency;
 import com.andreyshlyahtovich.jwtrestexample.payroll.assembler.CurrencyModelAssembler;
 import com.andreyshlyahtovich.jwtrestexample.payroll.exception.CurrencyNotFoundException;
 import com.andreyshlyahtovich.jwtrestexample.repository.CurrencyRepository;
+import com.andreyshlyahtovich.jwtrestexample.service.CurrencyService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -19,21 +20,20 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 public class CurrencyController {
 
-    private final CurrencyRepository currencyRepository;
+    private final CurrencyService currencyService;
 
     private final CurrencyModelAssembler assembler;
 
-    public CurrencyController(CurrencyRepository currencyRepository, CurrencyModelAssembler assembler) {
-        this.currencyRepository = currencyRepository;
+    public CurrencyController(CurrencyService currencyService, CurrencyModelAssembler assembler) {
         this.assembler = assembler;
+        this.currencyService = currencyService;
     }
 
     @GetMapping("/currencies")
     public CollectionModel<EntityModel<Currency>> all() {
 
 
-         List<EntityModel<Currency>> currencies = currencyRepository
-                 .findAll().stream()
+         List<EntityModel<Currency>> currencies = currencyService.getAll().stream()
                  .map(assembler::toModel)
                  .collect(Collectors.toList());
 
@@ -43,13 +43,13 @@ public class CurrencyController {
 
     @GetMapping("/currencies/{id}")
     public EntityModel<Currency> one(@PathVariable Long id) {
-        Currency currency = currencyRepository.findById(id).orElseThrow(() -> new CurrencyNotFoundException(id));
+        Currency currency = currencyService.getById(id);
         return assembler.toModel(currency);
     }
 
     @PostMapping("/currencies")
     ResponseEntity<?> newCurrency(@RequestBody Currency newCurrency) {
-        EntityModel<Currency> entityModel = assembler.toModel(currencyRepository.save(newCurrency));
+        EntityModel<Currency> entityModel = assembler.toModel(currencyService.save(newCurrency));
 
         return ResponseEntity
                 .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()) 
@@ -60,19 +60,8 @@ public class CurrencyController {
 
     @PutMapping("/currencies/{id}")
     ResponseEntity<?> replaceCurrency(@RequestBody Currency newCurrency, @PathVariable Long id) {
-
-        Currency updatedCurrency = currencyRepository.findById(id)
-                .map(currency -> {
-                    currency.setName(newCurrency.getName());
-                    return currencyRepository.save(currency);
-                })
-                .orElseGet(() -> {
-                    newCurrency.setId(id);
-                    return currencyRepository.save(newCurrency);
-                });
-
+        Currency updatedCurrency = currencyService.replace(id, newCurrency);
         EntityModel<Currency> entityModel = assembler.toModel(updatedCurrency);
-
         return ResponseEntity
                 .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(entityModel);
@@ -80,7 +69,7 @@ public class CurrencyController {
 
     @DeleteMapping("/currencies/{id}")
     ResponseEntity<?> deleteEmployee(@PathVariable Long id) {
-        currencyRepository.deleteById(id);
+        currencyService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

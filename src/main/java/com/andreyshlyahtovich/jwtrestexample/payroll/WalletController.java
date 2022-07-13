@@ -4,6 +4,8 @@ import com.andreyshlyahtovich.jwtrestexample.model.Wallet;
 import com.andreyshlyahtovich.jwtrestexample.payroll.assembler.WalletModelAssembler;
 import com.andreyshlyahtovich.jwtrestexample.payroll.exception.WalletNotFoundException;
 import com.andreyshlyahtovich.jwtrestexample.repository.WalletRepository;
+import com.andreyshlyahtovich.jwtrestexample.service.WalletService;
+import com.andreyshlyahtovich.jwtrestexample.service.WalletServiceImpl;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -19,12 +21,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 public class WalletController {
 
-    private final WalletRepository walletRepository;
-
+    private final WalletService walletService;
     private final WalletModelAssembler assembler;
 
-    public WalletController(WalletRepository walletRepository, WalletModelAssembler assembler) {
-        this.walletRepository = walletRepository;
+    public WalletController(WalletService walletService, WalletModelAssembler assembler) {
+        this.walletService = walletService;
         this.assembler = assembler;
     }
 
@@ -32,8 +33,7 @@ public class WalletController {
     public CollectionModel<EntityModel<Wallet>> all() {
 
 
-        List<EntityModel<Wallet>> wallets = walletRepository
-                .findAll().stream()
+        List<EntityModel<Wallet>> wallets = walletService.getAll().stream()
                 .map(assembler::toModel)
                 .collect(Collectors.toList());
 
@@ -43,35 +43,22 @@ public class WalletController {
 
     @GetMapping("/wallets/{id}")
     public EntityModel<Wallet> one(@PathVariable Long id) {
-        Wallet wallet = walletRepository.findById(id).orElseThrow(() -> new WalletNotFoundException(id));
+        Wallet wallet = walletService.getById(id);
         return assembler.toModel(wallet);
     }
 
     @PostMapping("/wallets")
     ResponseEntity<?> newWallet(@RequestBody Wallet newWallet) {
-        EntityModel<Wallet> entityModel = assembler.toModel(walletRepository.save(newWallet));
-
+        EntityModel<Wallet> entityModel = assembler.toModel(walletService.save(newWallet));
         return ResponseEntity
                 .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(entityModel);
     }
 
-
-
     @PutMapping("/wallets/{id}")
     ResponseEntity<?> replaceWallet(@RequestBody Wallet newWallet, @PathVariable Long id) {
 
-        Wallet updatedWallet = walletRepository.findById(id)
-                .map(wallet -> {
-                    wallet.setName(newWallet.getName());
-                    wallet.setAmount(newWallet.getAmount());
-                    wallet.setCurrency(newWallet.getCurrency());
-                    return walletRepository.save(wallet);
-                })
-                .orElseGet(() -> {
-                    newWallet.setId(id);
-                    return walletRepository.save(newWallet);
-                });
+        Wallet updatedWallet = walletService.replace(id, newWallet);
 
         EntityModel<Wallet> entityModel = assembler.toModel(updatedWallet);
 
@@ -82,7 +69,7 @@ public class WalletController {
 
     @DeleteMapping("/wallets/{id}")
     ResponseEntity<?> deleteEmployee(@PathVariable Long id) {
-        walletRepository.deleteById(id);
+        walletService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

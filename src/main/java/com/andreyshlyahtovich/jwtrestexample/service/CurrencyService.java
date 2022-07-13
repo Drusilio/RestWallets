@@ -6,13 +6,9 @@ import java.util.List;
 
 public interface CurrencyService {
 
-    Currency register(Currency currency);
-
     List<Currency> getAll();
-
-    Currency findByName(String name);
-
-    Currency findById(long id);
-
+    Currency getById(Long id);
+    Currency save(Currency currency);
+    Currency replace(Long id, Currency newCurrency);
     void delete(Long id);
 }

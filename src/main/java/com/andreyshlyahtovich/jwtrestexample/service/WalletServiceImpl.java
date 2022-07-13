@@ -1,6 +1,9 @@
 package com.andreyshlyahtovich.jwtrestexample.service;
 
 import com.andreyshlyahtovich.jwtrestexample.model.Wallet;
+import com.andreyshlyahtovich.jwtrestexample.model.Wallet;
+import com.andreyshlyahtovich.jwtrestexample.payroll.exception.WalletNotFoundException;
+import com.andreyshlyahtovich.jwtrestexample.repository.WalletRepository;
 import com.andreyshlyahtovich.jwtrestexample.repository.WalletRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,28 +17,45 @@ import java.util.List;
 public class WalletServiceImpl implements WalletService{
 
 
-    @Override
-    public Wallet register(Wallet wallet) {
-        return null;
+    private final WalletRepository walletRepository;
+
+    public WalletServiceImpl(WalletRepository walletRepository) {
+        this.walletRepository = walletRepository;
     }
+
 
     @Override
     public List<Wallet> getAll() {
-        return null;
+        return walletRepository.findAll();
     }
 
     @Override
-    public Wallet findByName(String name) {
-        return null;
+    public Wallet getById(Long id) {
+        return walletRepository.findById(id).orElseThrow(() -> new WalletNotFoundException(id));
     }
 
     @Override
-    public Wallet findById(long id) {
-        return null;
+    public Wallet save(Wallet newWallet) {
+        return walletRepository.save(newWallet);
+    }
+
+    @Override
+    public Wallet replace(Long id, Wallet newWallet) {
+        return walletRepository.findById(id)
+                .map(wallet -> {
+                    wallet.setName(newWallet.getName());
+                    wallet.setAmount(newWallet.getAmount());
+                    wallet.setCurrency(newWallet.getCurrency());
+                    return walletRepository.save(wallet);
+                })
+                .orElseGet(() -> {
+                    newWallet.setId(id);
+                    return walletRepository.save(newWallet);
+                });
     }
 
     @Override
     public void delete(Long id) {
-
+        walletRepository.deleteById(id);
     }
 }
