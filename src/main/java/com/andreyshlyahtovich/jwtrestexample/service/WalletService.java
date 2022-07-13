@@ -12,4 +12,5 @@ public interface WalletService {
     Wallet save(Wallet wallet);
     Wallet replace(Long id, Wallet newWallet);
     void delete(Long id);
+    void addUserToWallet(Long walletId, Long userId);
 }

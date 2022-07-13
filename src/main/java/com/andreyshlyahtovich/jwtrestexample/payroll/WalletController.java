@@ -72,4 +72,10 @@ public class WalletController {
         walletService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/wallets/adduser/{walletId}/{userId}")
+    public ResponseEntity<?> addUserToWallet(@PathVariable Long walletId,@PathVariable Long userId) {
+        walletService.addUserToWallet(walletId, userId);
+        return ResponseEntity.noContent().build();
+    }
 }

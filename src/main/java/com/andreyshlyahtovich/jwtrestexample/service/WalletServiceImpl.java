@@ -1,8 +1,11 @@
 package com.andreyshlyahtovich.jwtrestexample.service;
 
+import com.andreyshlyahtovich.jwtrestexample.model.User;
 import com.andreyshlyahtovich.jwtrestexample.model.Wallet;
 import com.andreyshlyahtovich.jwtrestexample.model.Wallet;
+import com.andreyshlyahtovich.jwtrestexample.payroll.exception.UserNotFoundException;
 import com.andreyshlyahtovich.jwtrestexample.payroll.exception.WalletNotFoundException;
+import com.andreyshlyahtovich.jwtrestexample.repository.UserRepository;
 import com.andreyshlyahtovich.jwtrestexample.repository.WalletRepository;
 import com.andreyshlyahtovich.jwtrestexample.repository.WalletRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +21,11 @@ public class WalletServiceImpl implements WalletService{
 
 
     private final WalletRepository walletRepository;
+    private final UserRepository userRepository;
 
-    public WalletServiceImpl(WalletRepository walletRepository) {
+    public WalletServiceImpl(WalletRepository walletRepository, UserRepository userRepository) {
         this.walletRepository = walletRepository;
+        this.userRepository = userRepository;
     }
 
 
@@ -57,5 +62,13 @@ public class WalletServiceImpl implements WalletService{
     @Override
     public void delete(Long id) {
         walletRepository.deleteById(id);
+    }
+
+    @Override
+    public void addUserToWallet(Long walletId, Long userId) {
+        Wallet wallet = getById(walletId);
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        user.addParticipantsWallet(wallet);
+        userRepository.save(user);
     }
 }
