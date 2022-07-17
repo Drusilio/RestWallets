@@ -1,6 +1,6 @@
-package com.andreyshlyahtovich.jwtrestexample.payroll.advice;
+package com.andreyshlyahtovich.jwtrestexample.controller.advice;
 
-import com.andreyshlyahtovich.jwtrestexample.payroll.exception.UserNotFoundException;
+import com.andreyshlyahtovich.jwtrestexample.exception.WalletNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-public class UserNotFoundAdvice {
+public class WalletNotFoundAdvice {
     @ResponseBody
-    @ExceptionHandler(UserNotFoundException.class)
+    @ExceptionHandler(WalletNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    String employeeNotFoundHandler(UserNotFoundException ex) {
+    String employeeNotFoundHandler(WalletNotFoundException ex) {
         return ex.getMessage();
     }
 }

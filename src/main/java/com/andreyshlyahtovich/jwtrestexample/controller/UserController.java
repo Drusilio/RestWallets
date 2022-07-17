@@ -1,9 +1,7 @@
-package com.andreyshlyahtovich.jwtrestexample.payroll;
+package com.andreyshlyahtovich.jwtrestexample.controller;
 
 import com.andreyshlyahtovich.jwtrestexample.model.User;
-import com.andreyshlyahtovich.jwtrestexample.payroll.assembler.UserModelAssembler;
-import com.andreyshlyahtovich.jwtrestexample.payroll.exception.UserNotFoundException;
-import com.andreyshlyahtovich.jwtrestexample.repository.UserRepository;
+import com.andreyshlyahtovich.jwtrestexample.controller.assembler.UserModelAssembler;
 import com.andreyshlyahtovich.jwtrestexample.service.UserService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -30,16 +28,12 @@ public class UserController {
 
     @GetMapping("/users")
     public CollectionModel<EntityModel<User>> all() {
-
-
          List<EntityModel<User>> users = userService.getAll()
                  .stream()
                  .map(assembler::toModel)
                  .collect(Collectors.toList());
-
          return CollectionModel.of(users, linkTo(methodOn(UserController.class).all()).withSelfRel());
     }
-
 
     @GetMapping("/users/{id}")
     public EntityModel<User> one(@PathVariable Long id) {
@@ -50,7 +44,6 @@ public class UserController {
     @PostMapping("/users")
     ResponseEntity<?> newUser(@RequestBody User newUser) {
         EntityModel<User> entityModel = assembler.toModel(userService.save(newUser));
-
         return ResponseEntity
                 .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(entityModel);
@@ -58,11 +51,8 @@ public class UserController {
 
     @PutMapping("/users/{id}")
     ResponseEntity<?> replaceUser(@RequestBody User newUser, @PathVariable Long id) {
-
         User updatedUser = userService.replace(id, newUser);
-
         EntityModel<User> entityModel = assembler.toModel(updatedUser);
-
         return ResponseEntity
                 .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(entityModel);

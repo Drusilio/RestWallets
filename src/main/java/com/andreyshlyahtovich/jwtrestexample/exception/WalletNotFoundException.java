@@ -1,4 +1,4 @@
-package com.andreyshlyahtovich.jwtrestexample.payroll.exception;
+package com.andreyshlyahtovich.jwtrestexample.exception;
 
 public class WalletNotFoundException extends RuntimeException{
     public WalletNotFoundException(Long id) {

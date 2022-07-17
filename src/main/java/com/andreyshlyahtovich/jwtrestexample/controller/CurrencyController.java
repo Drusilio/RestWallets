@@ -1,9 +1,7 @@
-package com.andreyshlyahtovich.jwtrestexample.payroll;
+package com.andreyshlyahtovich.jwtrestexample.controller;
 
 import com.andreyshlyahtovich.jwtrestexample.model.Currency;
-import com.andreyshlyahtovich.jwtrestexample.payroll.assembler.CurrencyModelAssembler;
-import com.andreyshlyahtovich.jwtrestexample.payroll.exception.CurrencyNotFoundException;
-import com.andreyshlyahtovich.jwtrestexample.repository.CurrencyRepository;
+import com.andreyshlyahtovich.jwtrestexample.controller.assembler.CurrencyModelAssembler;
 import com.andreyshlyahtovich.jwtrestexample.service.CurrencyService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -21,7 +19,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class CurrencyController {
 
     private final CurrencyService currencyService;
-
     private final CurrencyModelAssembler assembler;
 
     public CurrencyController(CurrencyService currencyService, CurrencyModelAssembler assembler) {
@@ -31,15 +28,11 @@ public class CurrencyController {
 
     @GetMapping("/currencies")
     public CollectionModel<EntityModel<Currency>> all() {
-
-
          List<EntityModel<Currency>> currencies = currencyService.getAll().stream()
                  .map(assembler::toModel)
                  .collect(Collectors.toList());
-
          return CollectionModel.of(currencies, linkTo(methodOn(CurrencyController.class).all()).withSelfRel());
     }
-
 
     @GetMapping("/currencies/{id}")
     public EntityModel<Currency> one(@PathVariable Long id) {
@@ -50,13 +43,10 @@ public class CurrencyController {
     @PostMapping("/currencies")
     ResponseEntity<?> newCurrency(@RequestBody Currency newCurrency) {
         EntityModel<Currency> entityModel = assembler.toModel(currencyService.save(newCurrency));
-
         return ResponseEntity
                 .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()) 
                 .body(entityModel);
     }
-
-
 
     @PutMapping("/currencies/{id}")
     ResponseEntity<?> replaceCurrency(@RequestBody Currency newCurrency, @PathVariable Long id) {

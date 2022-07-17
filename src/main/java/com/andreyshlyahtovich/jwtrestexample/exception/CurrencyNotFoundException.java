@@ -1,4 +1,4 @@
-package com.andreyshlyahtovich.jwtrestexample.payroll.exception;
+package com.andreyshlyahtovich.jwtrestexample.exception;
 
 public class CurrencyNotFoundException extends RuntimeException{
     public CurrencyNotFoundException(Long id) {

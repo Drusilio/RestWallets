@@ -3,7 +3,6 @@ package com.andreyshlyahtovich.jwtrestexample.model;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,7 +21,6 @@ public class Wallet {
     @Column(name = "amount")
     private double amount;
 
-
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
@@ -33,6 +31,4 @@ public class Wallet {
 
     @ManyToMany(mappedBy = "participantsWallets", fetch = FetchType.LAZY)
     private List<User> participantsList;
-
-
 }

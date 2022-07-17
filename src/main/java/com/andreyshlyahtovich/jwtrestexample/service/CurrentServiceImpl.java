@@ -1,7 +1,7 @@
 package com.andreyshlyahtovich.jwtrestexample.service;
 
 import com.andreyshlyahtovich.jwtrestexample.model.Currency;
-import com.andreyshlyahtovich.jwtrestexample.payroll.exception.CurrencyNotFoundException;
+import com.andreyshlyahtovich.jwtrestexample.exception.CurrencyNotFoundException;
 import com.andreyshlyahtovich.jwtrestexample.repository.CurrencyRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -2,14 +2,11 @@ package com.andreyshlyahtovich.jwtrestexample.service;
 
 import com.andreyshlyahtovich.jwtrestexample.model.User;
 import com.andreyshlyahtovich.jwtrestexample.model.Wallet;
-import com.andreyshlyahtovich.jwtrestexample.model.Wallet;
-import com.andreyshlyahtovich.jwtrestexample.payroll.exception.UserNotFoundException;
-import com.andreyshlyahtovich.jwtrestexample.payroll.exception.WalletNotFoundException;
+import com.andreyshlyahtovich.jwtrestexample.exception.UserNotFoundException;
+import com.andreyshlyahtovich.jwtrestexample.exception.WalletNotFoundException;
 import com.andreyshlyahtovich.jwtrestexample.repository.UserRepository;
 import com.andreyshlyahtovich.jwtrestexample.repository.WalletRepository;
-import com.andreyshlyahtovich.jwtrestexample.repository.WalletRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
@@ -19,7 +16,6 @@ import java.util.List;
 @Slf4j
 public class WalletServiceImpl implements WalletService{
 
-
     private final WalletRepository walletRepository;
     private final UserRepository userRepository;
 
@@ -27,7 +23,6 @@ public class WalletServiceImpl implements WalletService{
         this.walletRepository = walletRepository;
         this.userRepository = userRepository;
     }
-
 
     @Override
     public List<Wallet> getAll() {

@@ -1,11 +1,9 @@
 package com.andreyshlyahtovich.jwtrestexample.service;
 
 import com.andreyshlyahtovich.jwtrestexample.model.User;
-import com.andreyshlyahtovich.jwtrestexample.payroll.exception.UserNotFoundException;
+import com.andreyshlyahtovich.jwtrestexample.exception.UserNotFoundException;
 import com.andreyshlyahtovich.jwtrestexample.repository.UserRepository;
-import com.sun.xml.bind.v2.TODO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +17,6 @@ public class UserServiceImpl implements UserService{
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
 
     @Override
     public List<User> getAll() {
