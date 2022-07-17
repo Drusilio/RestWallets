@@ -12,7 +12,7 @@ public class WalletNotFoundAdvice {
     @ResponseBody
     @ExceptionHandler(WalletNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    String employeeNotFoundHandler(WalletNotFoundException ex) {
+    String walletNotFoundHandler(WalletNotFoundException ex) {
         return ex.getMessage();
     }
 }

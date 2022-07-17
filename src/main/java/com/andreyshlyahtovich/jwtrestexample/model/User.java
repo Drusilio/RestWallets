@@ -1,5 +1,7 @@
 package com.andreyshlyahtovich.jwtrestexample.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -26,10 +28,14 @@ public class User {
     @JoinTable(name = "users_wallnets",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "wallet_id"))
+    @JsonIgnore
     private List<Wallet> participantsWallets;
 
     @OneToMany(mappedBy = "owner")
+    @JsonIgnore
     private List<Wallet> ownWallets;
+
+    public User() {}
 
     public void addOwnWallet(Wallet wallet) {
         if(ownWallets == null) {

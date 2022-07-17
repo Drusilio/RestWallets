@@ -1,5 +1,7 @@
 package com.andreyshlyahtovich.jwtrestexample.service;
 
+import com.andreyshlyahtovich.jwtrestexample.exception.WalletNotChangedException;
+import com.andreyshlyahtovich.jwtrestexample.exception.WalletNotCreatedException;
 import com.andreyshlyahtovich.jwtrestexample.model.User;
 import com.andreyshlyahtovich.jwtrestexample.model.Wallet;
 import com.andreyshlyahtovich.jwtrestexample.exception.UserNotFoundException;
@@ -10,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @Service
@@ -36,27 +39,39 @@ public class WalletServiceImpl implements WalletService{
 
     @Override
     public Wallet save(Wallet newWallet) {
-        return walletRepository.save(newWallet);
+        try {
+                return walletRepository.save(newWallet);
+             }
+        catch (Exception e) {
+            throw new WalletNotCreatedException(newWallet);
+        }
     }
 
     @Override
     public Wallet replace(Long id, Wallet newWallet) {
-        return walletRepository.findById(id)
-                .map(wallet -> {
-                    wallet.setName(newWallet.getName());
-                    wallet.setAmount(newWallet.getAmount());
-                    wallet.setCurrency(newWallet.getCurrency());
-                    return walletRepository.save(wallet);
-                })
-                .orElseGet(() -> {
-                    newWallet.setId(id);
-                    return walletRepository.save(newWallet);
-                });
+
+            return walletRepository.findById(id)
+                    .map(wallet -> {
+                        wallet.setName(newWallet.getName());
+                        wallet.setAmount(newWallet.getAmount());
+                        wallet.setCurrency(newWallet.getCurrency());
+                        return walletRepository.save(wallet);
+                    })
+                    .orElseGet(() -> {
+                        newWallet.setId(id);
+                        return walletRepository.save(newWallet);
+                    });
+
+
     }
 
     @Override
     public void delete(Long id) {
-        walletRepository.deleteById(id);
+        try{
+            walletRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new WalletNotFoundException(id);
+        }
     }
 
     @Override

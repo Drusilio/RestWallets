@@ -59,9 +59,9 @@ public class WalletController {
     }
 
     @DeleteMapping("/wallets/{id}")
-    ResponseEntity<?> deleteEmployee(@PathVariable Long id) {
+    ResponseEntity<?> deleteWallet(@PathVariable Long id) {
         walletService.delete(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Wallet with id " + id + " successfully deleted");
     }
 
     @PostMapping("/wallets/adduser/{walletId}/{userId}")

@@ -12,7 +12,7 @@ public class CurrencyNotFoundAdvice {
     @ResponseBody
     @ExceptionHandler(CurrencyNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    String employeeNotFoundHandler(CurrencyNotFoundException ex) {
+    String currencyNotFoundHandler(CurrencyNotFoundException ex) {
         return ex.getMessage();
     }
 }

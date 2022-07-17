@@ -1,5 +1,7 @@
 package com.andreyshlyahtovich.jwtrestexample.service;
 
+import com.andreyshlyahtovich.jwtrestexample.exception.UserNotChangedException;
+import com.andreyshlyahtovich.jwtrestexample.exception.UserNotCreatedException;
 import com.andreyshlyahtovich.jwtrestexample.model.User;
 import com.andreyshlyahtovich.jwtrestexample.exception.UserNotFoundException;
 import com.andreyshlyahtovich.jwtrestexample.repository.UserRepository;
@@ -30,24 +32,36 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User save(User newUser) {
-        return userRepository.save(newUser);
+        try {
+            return userRepository.save(newUser);
+        } catch (Exception e) {
+            throw new UserNotCreatedException(newUser);
+        }
     }
 
     @Override
     public User replace(Long id, User newUser) {
-        return userRepository.findById(id)
-                .map(user -> {
-                    user.setUsername(newUser.getUsername());
-                    return userRepository.save(user);
-                })
-                .orElseGet(() -> {
-                    newUser.setId(id);
-                    return userRepository.save(newUser);
-                });
+        try {
+            return userRepository.findById(id)
+                    .map(user -> {
+                        user.setUsername(newUser.getUsername());
+                        return userRepository.save(user);
+                    })
+                    .orElseGet(() -> {
+                        newUser.setId(id);
+                        return save(newUser);
+                    });
+        } catch (Exception e) {
+            throw new UserNotChangedException(newUser);
+        }
     }
 
     @Override
     public void delete(Long id) {
-        userRepository.deleteById(id);
+        try {
+            userRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new UserNotFoundException(id);
+        }
     }
 }

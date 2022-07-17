@@ -1,5 +1,7 @@
 package com.andreyshlyahtovich.jwtrestexample.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -25,10 +27,13 @@ public class Wallet {
     @JoinColumn(name = "owner_id")
     private User owner;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "currency_id")
     private Currency currency;
 
     @ManyToMany(mappedBy = "participantsWallets", fetch = FetchType.LAZY)
     private List<User> participantsList;
+
+    public Wallet() {
+    }
 }

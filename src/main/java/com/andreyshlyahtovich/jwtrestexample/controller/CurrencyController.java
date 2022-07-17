@@ -58,8 +58,8 @@ public class CurrencyController {
     }
 
     @DeleteMapping("/currencies/{id}")
-    ResponseEntity<?> deleteEmployee(@PathVariable Long id) {
+    ResponseEntity<?> deleteCurrency(@PathVariable Long id) {
         currencyService.delete(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Currency with id " + id + " successfully deleted");
     }
 }
